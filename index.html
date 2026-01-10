@@ -157,6 +157,7 @@
         /* Lime Gradient Text */
         .text-gradient {
             background: linear-gradient(135deg, #a3e635, #22c55e, #14b8a6);
+            background-clip: text;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
@@ -983,40 +984,43 @@
 
     <!-- Scripts -->
     <script>
-                // --- Splash Screen Logic ---
-                    window.addEventListener('DOMContentLoaded', () => {
-                        const bar = document.getElementById('splash-bar');
-                        const log = document.getElementById('status-log');
-                        const splash = document.getElementById('splash-screen');
+        // --- Splash Screen Logic ---
+        window.addEventListener('DOMContentLoaded', () => {
+            const bar = document.getElementById('splash-bar');
+            const log = document.getElementById('status-log');
+            const splash = document.getElementById('splash-screen');
 
-                        // Progress Bar Animation
-                        setTimeout(() => {
-                            if (bar) bar.style.width = '100%';
-                        }, 100);
+            // Progress Bar Animation
+            setTimeout(() => {
+                if (bar) bar.style.width = '100%';
+            }, 100);
 
-                        // Log sequence
-                        const messages = [
-                            "> Mounting encrypted neural volumes...",
-                            "> Calibrating Agentic AI modules...",
-                            "> Establishing secure handshake...",
-                            "> SYSTEM READY: Welcome back, Satya."
-                        ];
+            // Log sequence
+            const messages = [
+                "> Mounting encrypted neural volumes...",
+                "> Calibrating Agentic AI modules...",
+                "> Establishing secure handshake...",
+                "> SYSTEM READY: Welcome back, Satya."
+            ];
 
-                        messages.forEach((msg, i) => {
-                            setTimeout(() => {
-                                if (log) log.textContent = msg;
-                            }, 750 * i);
-                        });
+            messages.forEach((msg, i) => {
+                setTimeout(() => {
+                    if (log) log.textContent = msg;
+                }, 750 * i);
+            });
 
-                        // Final Hide
-                        setTimeout(() => {
-                            if (splash) {
-                                splash.style.opacity = '0';
-                                splash.style.pointerEvents = 'none';
-                                setTimeout(() => splash.remove(), 800);
-                            }
-                        }, 5000);
-                    });
+            // Final Hide
+            setTimeout(() => {
+                if (splash) {
+                    splash.style.opacity = '0';
+                    splash.style.pointerEvents = 'none';
+                    setTimeout(() => splash.remove(), 800);
+                }
+            }, 5000);
+
+            // Start typing effect here
+            type();
+        });
 
         // --- Sound Controller ---
         class SoundController {
@@ -1072,6 +1076,7 @@
             playChatOpen() { this.playTone(600, 'sawtooth', 0.2, 0.05); }
             playChatClose() { this.playTone(300, 'sawtooth', 0.2, 0.05); }
             playTyping() { this.playTone(1200, 'square', 0.02, 0.01); }
+            playShuffle() { this.playTone(500, 'triangle', 0.2, 0.05); } // ✅ Added missing method
         }
 
         const sounds = new SoundController();
@@ -1081,20 +1086,21 @@
         }, { once: true });
 
         const soundBtn = document.getElementById('sound-toggle');
-        soundBtn.addEventListener('click', () => {
-            const enabled = sounds.toggle();
-            soundBtn.innerHTML = enabled ? '<i class="fas fa-volume-high"></i>' : '<i class="fas fa-volume-mute"></i>';
-            soundBtn.style.color = enabled ? '#a3e635' : '#ef4444';
-        });
+        if (soundBtn) {
+            soundBtn.addEventListener('click', () => {
+                const enabled = sounds.toggle();
+                soundBtn.innerHTML = enabled ? '<i class="fas fa-volume-high"></i>' : '<i class="fas fa-volume-mute"></i>';
+                soundBtn.style.color = enabled ? '#a3e635' : '#ef4444';
+            });
+        }
 
         document.querySelectorAll('.interactable, button, a').forEach(el => {
             el.addEventListener('mouseenter', () => sounds.playHover());
             el.addEventListener('click', () => sounds.playClick());
         });
 
-
         // --- Typing Effect ---
-        const roles = ["GenAI Engineer","Software Engineer Backend","Data Scientist - Manager", "AI Engineer"];
+        const roles = ["GenAI Engineer", "Software Engineer Backend", "Data Scientist - Manager", "AI Engineer"];
         let roleIndex = 0;
         let charIndex = 0;
         let isDeleting = false;
@@ -1120,12 +1126,13 @@
             const speed = isDeleting ? 50 : 100;
             setTimeout(type, speed);
         }
-        document.addEventListener('DOMContentLoaded', type);
 
         // --- Mobile Menu ---
         const btn = document.getElementById('mobile-menu-btn');
         const menu = document.getElementById('mobile-menu');
-        btn.addEventListener('click', () => menu.classList.toggle('hidden'));
+        if (btn && menu) {
+            btn.addEventListener('click', () => menu.classList.toggle('hidden'));
+        }
 
         // --- Chat Widget UI Logic ---
         const chatToggle = document.getElementById('chat-toggle');
@@ -1137,41 +1144,48 @@
         const btnCloseSettings = document.getElementById('btn-close-settings');
         const initPanel = document.getElementById('init-panel');
 
-        chatToggle.addEventListener('click', () => {
-            chatContainer.classList.remove('hidden');
-            chatToggle.classList.add('hidden');
-            sounds.playChatOpen();
-        });
+        if (chatToggle && chatContainer) {
+            chatToggle.addEventListener('click', () => {
+                chatContainer.classList.remove('hidden');
+                chatToggle.classList.add('hidden');
+                sounds.playChatOpen();
+            });
+        }
 
-        closeChat.addEventListener('click', () => {
-            chatContainer.classList.add('hidden');
-            chatToggle.classList.remove('hidden');
-            sounds.playChatClose();
-        });
+        if (closeChat && chatContainer) {
+            closeChat.addEventListener('click', () => {
+                chatContainer.classList.add('hidden');
+                chatToggle.classList.remove('hidden');
+                sounds.playChatClose();
+            });
+        }
 
-        settingsBtn.addEventListener('click', () => {
-            settingsPanel.classList.remove('hidden');
-            chatInterface.classList.add('hidden');
-            initPanel.classList.add('hidden'); // Ensure init is hidden
-        });
+        if (settingsBtn && settingsPanel) {
+            settingsBtn.addEventListener('click', () => {
+                settingsPanel.classList.remove('hidden');
+                chatInterface.classList.add('hidden');
+                initPanel.classList.add('hidden');
+            });
+        }
 
-        btnCloseSettings.addEventListener('click', () => {
-            settingsPanel.classList.add('hidden');
-            // If engine is ready, show chat, otherwise show init
-            if (isEngineReady) {
-                chatInterface.classList.remove('hidden');
-            } else {
-                initPanel.classList.remove('hidden');
-            }
-        });
+        if (btnCloseSettings && settingsPanel) {
+            btnCloseSettings.addEventListener('click', () => {
+                settingsPanel.classList.add('hidden');
+                if (window.isEngineReady) {
+                    chatInterface.classList.remove('hidden');
+                } else {
+                    initPanel.classList.remove('hidden');
+                }
+            });
+        }
 
         // --- Advanced 3D Parallax (Desktop Only) ---
-        const container = document.getElementById('profile-container');
         const items = document.querySelectorAll('.parallax-item');
+        const parallaxContainer = document.getElementById('profile-container');
 
-        if (!window.matchMedia("(hover: none)").matches) {
-            container.addEventListener('mousemove', (e) => {
-                const { width, height, left, top } = container.getBoundingClientRect();
+        if (parallaxContainer && !window.matchMedia("(hover: none)").matches) {
+            parallaxContainer.addEventListener('mousemove', (e) => {
+                const { width, height, left, top } = parallaxContainer.getBoundingClientRect();
                 const x = e.clientX - left;
                 const y = e.clientY - top;
 
@@ -1192,7 +1206,7 @@
                 });
             });
 
-            container.addEventListener('mouseleave', () => {
+            parallaxContainer.addEventListener('mouseleave', () => {
                 items.forEach(item => {
                     item.style.transform = 'translate(0, 0) rotateX(0) rotateY(0)';
                 });
@@ -1205,98 +1219,32 @@
         import * as webllm from "https://esm.run/@mlc-ai/web-llm";
 
         const RESUME_CONTEXT = `
-        You are an AI assistant representing Satya gautam. Answer questions strictly based on his resume below. Keep answers concise, professional, and friendly.
+        You are an AI assistant representing Satya Gautam. Answer questions strictly based on his resume below. Keep answers concise, professional, and friendly.
+        (resume text)
+        `;
 
-        RESUME:
-        Name: Satya gautam
-        Role: Software Engineer Backend - Manager | GENAI Engineer 
-        Contact: +91-7355452773, er.satyagautam@gmail.com
-        Location: India
-
-        SUMMARY:
-        Highly skilled and innovative GENAI Engineer, Software Developer, and Data Scientist with 3+ years of industrial experience in designing, developing, and deploying robust data pipelines, advanced analytics, and reporting solutions. Proficient in Python, C++, Core JAVA,Java script, SQL, NoSQL, and specialized visualization tools to deliver actionable insights and build intelligent systems. Adept at automation, stakeholder management, and ensuring high data quality and operational efficiency.
-
-        EXPERIENCE:
-        1. GenAI Engineer - Manager at HDFC Bank (July 2022 - Present):
-           - Location: Noida, Uttar Pradesh (Hybrid).
-           - Managing Data Science strategies and driving AI adoption in banking.
-
-        EDUCATION:
-        - B.Tech Computer Science, NIT-BHOPAL
-
-        SKILLS:
-        - Generative AI & MLOPS : GenAI, RAG, Langchain, LLM's, Litellm, Agents, Google ADK, UV,Redis                                                                                                                                                                                                                                                                           Programming Languages	Python, Java script, C++, Core Java, Node JS
-        - Frontend Stack : React.JS, Html,Tailwind, Css
-        - Backend Stack : Python, Fastapi, Node.JS, Express, RestAPIs
-        - Database : MongoDB, Postgres SQL
-        - Containerization & CI/CD : Kubernetes,Helm, Docker, Jenkins
-        - Testing & Automation : Locust, Postman
-        - Tools: VS Code, PyCharm, Jupyter, Git, Linux
-
-        PROJECTS:
-
-        - Hybrid RAG QnA System
-           ® Built a Retrieval Augment Generation (RAG) pipeline supporting multi pdf Qna combining semantic and contexual search
-           ® Implemented hybrid retrival   using PGVector and BM25 for enhanced   accuracy and relavance
-           ® Designed modular FastAPI backend with support of contexual query handling and memory based response
-        
-        - Agent Builder Application
-             Developing a low-code/no-code agent creation platform enabling non technical users to build AI agents via an interactive UI
-             Techstack - Python, Fastapi, UV, Litellm, React JS, RestAPI, Helm, Kubernates, Opik
-
-        - Blog Application
-            Created a fullstack blogging platform for posting liking and comenting on text/image blog
-            Enabled blog storage and retrieval via MongoDB with an interactive frontend interface
-        
-        - Smart Contact Manage
-            Built a contact management system with secure authentication and authorization using spring boot
-            Designed an efficient contact storage workflow and responsive frontend interface
-
-
-        - Resume JD Matcher (2025): AI job matching tool using Python, NLTK, LangChain, Gemini 2.5 Flash, Streamlit, and Plotly.
-        - CryptoTracker (2023): Real-time crypto wallet dashboard using Flask, LSTM, SQLite, WebSockets, and Chart.js.
-        - LangChain One (2023): Multimodal chatbot using LlamaIndex, LangChain, EasyOCR, and YOLOv8.
-
-        ;
-
-        let messages = [
-            { content: RESUME_CONTEXT, role: "system" }
-        ];
-
+        let messages = [{ content: RESUME_CONTEXT, role: "system" }];
         let engine = null;
         window.isEngineReady = false;
 
-        const initPanel = document.getElementById('init-panel');
-        const chatInterface = document.getElementById('chat-interface');
         const progressBar = document.getElementById('progress-bar');
-        const progressContainer = document.getElementById('progress-bar-container');
         const statusText = document.getElementById('status-text');
         const chatBox = document.getElementById('chat-box');
         const userInput = document.getElementById('user-input');
         const sendBtn = document.getElementById('send-btn');
         const chatStats = document.getElementById('chat-stats');
 
-        // Settings Elements
         const modelSelect = document.getElementById('model-select');
         const tempSlider = document.getElementById('temp-slider');
         const tempValue = document.getElementById('temp-value');
         const btnReload = document.getElementById('btn-reload');
         const btnClear = document.getElementById('btn-clear');
-        const btnCloseSettings = document.getElementById('btn-close-settings');
-        const settingsPanel = document.getElementById('settings-panel');
 
         const STORAGE_KEY = 'satya_portfolio_chat_history';
+        let config = { temperature: 0.1, top_p: 0.9, model: "SmolLM2-135M-Instruct-q0f16-MLC" };
 
-        // Config State
-        let config = {
-            temperature: 0.1,
-            top_p: 0.9,
-            model: "SmolLM2-135M-Instruct-q0f16-MLC"
-        };
-
-        // Populate Models
+        // Model population
         const availableModels = webllm.prebuiltAppConfig.model_list.map(m => m.model_id);
-
         modelSelect.innerHTML = "";
         if (!availableModels.includes(config.model)) {
             const option = document.createElement("option");
@@ -1314,13 +1262,10 @@
         });
         modelSelect.value = config.model;
 
-        // History Logic
         function saveHistory() {
             try {
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
-            } catch (e) {
-                console.warn("Failed to save chat history", e);
-            }
+            } catch (e) { console.warn("Failed to save chat history", e); }
         }
 
         function loadHistory() {
@@ -1329,32 +1274,23 @@
                 try {
                     const parsed = JSON.parse(saved);
                     if (parsed.length > 0 && parsed[0].role === 'system') {
-                        // Refresh resume context
                         parsed[0].content = RESUME_CONTEXT;
                         messages = parsed;
-
                         messages.forEach(msg => {
-                            if (msg.role !== 'system') {
-                                appendMessage(msg.content, msg.role);
-                            }
+                            if (msg.role !== 'system') appendMessage(msg.content, msg.role);
                         });
                     }
-                } catch (e) {
-                    console.error("Error loading history", e);
-                }
+                } catch (e) { console.error("Error loading history", e); }
             }
         }
 
         const autoLoadModel = async () => {
             initPanel.classList.remove('hidden');
             chatInterface.classList.add('hidden');
-
-            // Load history before engine init
             loadHistory();
 
             try {
                 engine = new webllm.MLCEngine();
-
                 engine.setInitProgressCallback((report) => {
                     let width = 0;
                     if (report.progress) width = report.progress * 100;
@@ -1362,17 +1298,11 @@
                     statusText.textContent = report.text;
                 });
 
-                await engine.reload(config.model, {
-                    temperature: config.temperature,
-                    top_p: config.top_p
-                });
-
+                await engine.reload(config.model, { temperature: config.temperature, top_p: config.top_p });
                 initPanel.classList.add('hidden');
                 chatInterface.classList.remove('hidden');
                 window.isEngineReady = true;
-
                 if (typeof sounds !== 'undefined') sounds.playStartup();
-
             } catch (err) {
                 console.error(err);
                 statusText.textContent = "Auto-load failed. Reload page to retry.";
@@ -1381,8 +1311,6 @@
         };
 
         window.addEventListener('load', autoLoadModel);
-
-        // --- Settings Logic ---
 
         tempSlider.addEventListener('input', (e) => {
             config.temperature = parseFloat(e.target.value);
@@ -1393,17 +1321,7 @@
             if (engine) await engine.resetChat();
             messages = [{ content: RESUME_CONTEXT, role: "system" }];
             localStorage.removeItem(STORAGE_KEY);
-
-            chatBox.innerHTML = `
-                <div class="flex justify-start items-end gap-2">
-                    <div class="w-6 h-6 rounded-sm bg-gray-800 flex items-center justify-center shrink-0 border border-gray-700">
-                        <i class="fas fa-robot text-[10px] text-gray-400"></i>
-                    </div>
-                    <div class="bg-gray-900 border border-gray-800 p-3 max-w-[85%] text-xs text-gray-300 font-mono">
-                        <p>Memory cleared. System ready.</p>
-                    </div>
-                </div>
-            `;
+            chatBox.innerHTML = `<div class="flex justify-start items-end gap-2"><div class="w-6 h-6 rounded-sm bg-gray-800 flex items-center justify-center shrink-0 border border-gray-700"><i class="fas fa-robot text-[10px] text-gray-400"></i></div><div class="bg-gray-900 border border-gray-800 p-3 max-w-[85%] text-xs text-gray-300 font-mono"><p>Memory cleared. System ready.</p></div></div>`;
             settingsPanel.classList.add('hidden');
             chatInterface.classList.remove('hidden');
         });
@@ -1412,18 +1330,13 @@
             config.model = modelSelect.value;
             settingsPanel.classList.add('hidden');
             window.isEngineReady = false;
-
             initPanel.classList.remove('hidden');
             chatInterface.classList.add('hidden');
             progressBar.style.width = "0%";
             statusText.textContent = "Reloading Engine...";
             statusText.classList.remove('text-red-500');
-
             try {
-                await engine.reload(config.model, {
-                    temperature: config.temperature,
-                    top_p: config.top_p
-                });
+                await engine.reload(config.model, { temperature: config.temperature, top_p: config.top_p });
                 initPanel.classList.add('hidden');
                 chatInterface.classList.remove('hidden');
                 window.isEngineReady = true;
@@ -1433,27 +1346,17 @@
             }
         });
 
-
-        // --- Chat Logic ---
-
         async function streamingGenerating(messages, onUpdate, onFinish, onError) {
             try {
-                // Optimization: Keep system prompt + last 10 messages for faster processing
-                // Note: MLCEngine manages KV cache automatically, but limiting input context helps initial processing.
                 const MAX_CONTEXT_MSG = 10;
                 let contextMessages = messages;
-
-                if (messages.length > MAX_CONTEXT_MSG + 1) {
-                    // Always keep system prompt (index 0)
+                if (messages.length > MAX_CONTEXT_MSG + 1)
                     contextMessages = [messages[0], ...messages.slice(-MAX_CONTEXT_MSG)];
-                }
 
                 let curMessage = "";
                 const completion = await engine.chat.completions.create({
-                    stream: true,
-                    messages: contextMessages,
-                    temperature: config.temperature,
-                    top_p: config.top_p
+                    stream: true, messages: contextMessages,
+                    temperature: config.temperature, top_p: config.top_p
                 });
                 for await (const chunk of completion) {
                     const curDelta = chunk.choices[0].delta.content;
@@ -1471,19 +1374,15 @@
         async function onMessageSend() {
             const input = userInput.value.trim();
             if (input.length === 0) return;
-
             if (typeof sounds !== 'undefined') sounds.playMessageSent();
-
             userInput.disabled = true;
             sendBtn.disabled = true;
             userInput.value = "";
             userInput.setAttribute("placeholder", "Processing...");
-
             const message = { content: input, role: "user" };
             messages.push(message);
-            saveHistory(); // Save immediately
+            saveHistory();
             appendMessage(input, "user");
-
             const aiMsgId = appendMessage("Thinking...", "assistant");
             const aiMsgElem = document.getElementById(aiMsgId);
 
@@ -1491,12 +1390,10 @@
                 aiMsgElem.textContent = curMessage;
                 chatBox.scrollTop = chatBox.scrollHeight;
             };
-
             const onFinish = async (finalMessage) => {
                 aiMsgElem.textContent = finalMessage;
                 messages.push({ role: "assistant", content: finalMessage });
-                saveHistory(); // Save after response
-
+                saveHistory();
                 userInput.disabled = false;
                 sendBtn.disabled = false;
                 userInput.setAttribute("placeholder", "Enter command...");
@@ -1505,14 +1402,12 @@
                 chatStats.textContent = stats;
                 chatStats.classList.remove('hidden');
             };
-
             const onError = (err) => {
                 aiMsgElem.textContent = "Error: " + err.message;
                 aiMsgElem.classList.add('text-red-400');
                 userInput.disabled = false;
                 sendBtn.disabled = false;
             };
-
             streamingGenerating(messages, onUpdate, onFinish, onError);
         }
 
@@ -1520,130 +1415,28 @@
             const id = 'msg-' + Date.now() + Math.random();
             const rowDiv = document.createElement('div');
             rowDiv.className = `flex items-end gap-2 ${role === 'user' ? 'justify-end' : 'justify-start'}`;
-
             const avatar = document.createElement('div');
-            avatar.className = `w-6 h-6 rounded-sm flex items-center justify-center shrink-0 border ${role === 'user' ? 'bg-primary border-primary' : 'bg-gray-800 border-gray-700'
-                }`;
+            avatar.className = `w-6 h-6 rounded-sm flex items-center justify-center shrink-0 border ${role === 'user' ? 'bg-primary border-primary' : 'bg-gray-800 border-gray-700'}`;
             avatar.innerHTML = role === 'user'
                 ? '<i class="fas fa-user text-[10px] text-black"></i>'
                 : '<i class="fas fa-robot text-[10px] text-gray-400"></i>';
-
             const bubble = document.createElement('div');
             bubble.id = role === 'assistant' ? id : '';
             bubble.className = role === 'user'
                 ? 'bg-primary text-black p-3 max-w-[85%] text-xs font-mono font-bold'
                 : 'bg-gray-900 border border-gray-800 p-3 max-w-[85%] text-xs text-gray-300 font-mono';
-
             bubble.textContent = text;
-
-            if (role === 'user') {
-                rowDiv.appendChild(bubble);
-                rowDiv.appendChild(avatar);
-            } else {
-                rowDiv.appendChild(avatar);
-                rowDiv.appendChild(bubble);
-            }
-
+            if (role === 'user') { rowDiv.appendChild(bubble); rowDiv.appendChild(avatar); }
+            else { rowDiv.appendChild(avatar); rowDiv.appendChild(bubble); }
             chatBox.appendChild(rowDiv);
             chatBox.scrollTop = chatBox.scrollHeight;
             return id;
         }
 
         sendBtn.addEventListener('click', onMessageSend);
-        userInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') onMessageSend();
-        });
-
-        // --- Integrated Parallax Logic (Mouse + Gyroscope) ---
-        const container = document.getElementById('profile-container');
-        const items = document.querySelectorAll('.parallax-item');
-        const calibOverlay = document.getElementById('mobile-calib');
-
-        let targetX = 0, targetY = 0;
-        let currentX = 0, currentY = 0;
-        const lerpFactor = 0.08;
-
-        function updateParallax() {
-            currentX += (targetX - currentX) * lerpFactor;
-            currentY += (targetY - currentY) * lerpFactor;
-
-            items.forEach(item => {
-                const depth = parseFloat(item.getAttribute('data-depth'));
-                const rotateFactor = parseFloat(item.getAttribute('data-rotate') || 0);
-
-                const moveRange = 70; // SIGNIFICANTLY REDUCED RANGE TO PREVENT CLIPPING
-                const moveX = currentX * depth * moveRange;
-                const moveY = currentY * depth * moveRange;
-
-                const rotateX = -currentY * rotateFactor * 30; // Reduced rotation
-                const rotateY = currentX * rotateFactor * 30;
-
-                item.style.transform = `translate3d(${moveX}px, ${moveY}px, 0) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
-            });
-            requestAnimationFrame(updateParallax);
-        }
-        updateParallax();
-
-        // Mouse Tracker
-        if (window.matchMedia("(pointer: fine)").matches) {
-            container.addEventListener('mousemove', (e) => {
-                const { width, height, left, top } = container.getBoundingClientRect();
-                targetX = (e.clientX - left) / width - 0.5;
-                targetY = (e.clientY - top) / height - 0.5;
-            });
-            container.addEventListener('mouseleave', () => {
-                targetX = 0; targetY = 0;
-            });
-        }
-
-        // Gyroscope/Motion (Mobile)
-        async function initMotion() {
-            if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
-                try {
-                    const permission = await DeviceOrientationEvent.requestPermission();
-                    if (permission === 'granted') {
-                        startMotionListener();
-                    }
-                } catch (e) { console.error("Permission error", e); }
-            } else if (window.DeviceOrientationEvent) {
-                startMotionListener();
-            }
-        }
-
-        function startMotionListener() {
-            calibOverlay.style.display = 'block';
-            window.addEventListener('deviceorientation', (e) => {
-                // gamma: left to right tilt in degrees [-90, 90]
-                // beta: front to back tilt in degrees [-180, 180]
-                let roll = e.gamma;
-                let pitch = e.beta;
-
-                // Sensitivity factors: normalize values to roughly -0.5 to 0.5
-                // Centering pitch at 45 degrees for standard viewing angle
-                targetX = Math.max(-1, Math.min(1, roll / 20)) * 0.5;
-                targetY = Math.max(-1, Math.min(1, (pitch - 45) / 20)) * 0.5;
-            });
-        }
-
-        document.body.addEventListener('click', initMotion, { once: true });
-        document.body.addEventListener('touchstart', initMotion, { once: true });
-
-        // Blob Randomization Logic
-        const randomizeBtn = document.getElementById('randomize-shape');
-        const mainBlob = document.getElementById('main-blob');
-
-        function generateRandomBlob() {
-            const r = () => Math.floor(Math.random() * (75 - 25 + 1)) + 25;
-            const val = `${r()}% ${r()}% ${r()}% ${r()}% / ${r()}% ${r()}% ${r()}% ${r()}%`;
-            mainBlob.style.borderRadius = val;
-            if (typeof sounds !== 'undefined') sounds.playShuffle();
-        }
-
-        randomizeBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            generateRandomBlob();
-        });
+        userInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') onMessageSend(); });
     </script>
+
 </body>
 
 </html>
