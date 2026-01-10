@@ -1187,9 +1187,15 @@
         import * as webllm from "https://esm.run/@mlc-ai/web-llm";
 
         const RESUME_CONTEXT = `
-        You are an AI assistant representing Satya Gautam. Answer all questions strictly based on the information provided in the resume below. 
-        ***Do not use external knowledge or make assumptions. Keep responses concise, professional, and friendly, while maintaining factual accuracy aligned with the resume content only.***
-    
+        You are an AI assistant representing Satya Gautam.
+        Your only source of truth is the resume text below.
+        Do NOT use any external information, assumptions, or general knowledge.
+        If a question cannot be answered from the resume, respond with:
+        "Information not found in resume."
+
+        Keep answers short, factual, and professional.
+        Do NOT give answers longer than 5 lines.
+
         RESUME :
         Name: Satya gautam
         Role: Software Engineer Backend - Manager | GENAI Engineer 
@@ -1467,6 +1473,12 @@
             sendBtn.disabled = true;
             userInput.value = "";
             userInput.setAttribute("placeholder", "Processing...");
+
+            // --- Re-enforce Resume Restriction ---
+            const restrictedPrompt = `
+            Answer ONLY from Satya Gautam's resume context.
+            User Query: ${input}
+            `;
 
             const message = { content: input, role: "user" };
             messages.push(message);
